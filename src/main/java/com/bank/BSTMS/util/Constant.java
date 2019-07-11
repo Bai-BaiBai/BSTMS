@@ -15,6 +15,22 @@ public interface Constant {
 	 */
 	
 	/**
+	 * 短信发送接口URL
+	 */
+	public static final String SMS_URL = "http://106.ihuyi.cn/webservice/sms.php?method=Submit";
+	public static final String SMS_API_ID = "C86066574";
+	public static final String SMS_API_KEY = "5ab817a10d08cfe8e82c7aaeafae9b94";
+	public static final int VALIDATE_CODE_COUNT = 4;
+	public static final int VALIDATE_CODE_EXPIRE_TIME = 300;
+	
+	/**
+	 *  登录成功存在session里的银行卡号
+	 */
+	String SESSION_ATTRIBUTE_CARD_ID = "cardId";
+	public static final String SESSION_VALIDATE_CODE_KEY = "validateCode";
+	
+	
+	/**
 	 * 存款动作标识
 	 */
 	public static final int SAVE_MONEY_STATE = 1;
@@ -53,11 +69,6 @@ public interface Constant {
 	 *  信用卡初始透支额度
 	 */
 	public static final double CREDIT_CARD_INIT_OVERDRAFT_LIMIT = 1000;
-	
-	/**
-	 *  登录成功存在session里的银行卡号
-	 */
-	String SESSION_ATTRIBUTE_CARD_ID = "cardId";
 
 	/**
 	 * 返回给前端页面的提示信息
