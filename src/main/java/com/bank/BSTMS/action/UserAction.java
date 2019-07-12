@@ -17,6 +17,7 @@ import com.bank.BSTMS.pojo.CardInfoExtendToString;
 import com.bank.BSTMS.pojo.UserInfo;
 import com.bank.BSTMS.service.CardService;
 import com.bank.BSTMS.service.UserService;
+import com.bank.BSTMS.service.ValidateCodeService;
 import com.bank.BSTMS.util.ApiResponse;
 import com.bank.BSTMS.util.Constant;
 
@@ -35,6 +36,9 @@ public class UserAction {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private ValidateCodeService validateCodeService;
 	
 	/**
 	 * 
@@ -137,6 +141,29 @@ public class UserAction {
 		session.invalidate();
 		
 		response.setCode(ApiResponse.SUCCESS_CODE);
+		return response;
+	}
+	
+	/**
+	 * 发送验证码请求，成功只返回ApiResponse.SuccessCode
+	 * @Title: sendsms
+	 * @param mobile
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/sendsms")
+	public ApiResponse<Object> sendsms(HttpServletRequest request){
+		
+		ApiResponse<Object> response = new ApiResponse<Object>();
+		response.setCode(ApiResponse.SUCCESS_CODE);
+		
+		try {
+			validateCodeService.create(request);
+		} catch (Exception e) {
+			response.setCode(ApiResponse.ERROR_CODE);
+			response.setError(e.getMessage());
+		}
+		
 		return response;
 	}
 }
