@@ -20,8 +20,9 @@ public interface Constant {
 	public static final String SMS_URL = "http://106.ihuyi.cn/webservice/sms.php?method=Submit";
 	public static final String SMS_API_ID = "C86066574";
 	public static final String SMS_API_KEY = "5ab817a10d08cfe8e82c7aaeafae9b94";
-	public static final int VALIDATE_CODE_COUNT = 4;
+	public static final int VALIDATE_CODE_COUNT = 6;
 	public static final int VALIDATE_CODE_EXPIRE_TIME = 300;
+	String VALIDATE_CODE_ERROR = "验证码错误或已失效";
 	
 	/**
 	 *  登录成功存在session里的银行卡号
