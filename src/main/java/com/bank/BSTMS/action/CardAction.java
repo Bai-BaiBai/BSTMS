@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bank.BSTMS.pojo.CardInfo;
 import com.bank.BSTMS.service.CardService;
 import com.bank.BSTMS.service.ExchangeService;
+import com.bank.BSTMS.service.ValidateCodeService;
 import com.bank.BSTMS.util.ApiResponse;
 import com.bank.BSTMS.util.Constant;
 
@@ -35,6 +36,9 @@ public class CardAction {
 	
 	@Autowired
 	private ExchangeService exchangeService;
+	
+	@Autowired
+	private ValidateCodeService validateCodeService;
 	
 	/**
 	 * 
@@ -137,12 +141,21 @@ public class CardAction {
 	 * @return
 	 */
 	@PutMapping("/password")
-	public ApiResponse<CardInfo> updatePassword(@RequestParam int oldPassword, @RequestParam int newPassword, HttpServletRequest request){
+	public ApiResponse<CardInfo> updatePassword(@RequestParam int oldPassword, @RequestParam int newPassword, @RequestParam String validateCode, HttpServletRequest request){
 		
 		ApiResponse<CardInfo> response = new ApiResponse<CardInfo>();
 		Long cardId = (Long) request.getSession().getAttribute(Constant.SESSION_ATTRIBUTE_CARD_ID);
-		 
-		CardInfo cardInfo = cardService.updatePassword(cardId, oldPassword, newPassword);
+		
+		CardInfo cardInfo = null;
+		// 验证码验证通过后，执行更新密码操作
+		if (validateCodeService.validate(request, validateCode)) {
+			cardInfo = cardService.updatePassword(cardId, oldPassword, newPassword);
+		} else {
+			response.setCode(ApiResponse.ERROR_CODE);
+			response.setError(Constant.VALIDATE_CODE_ERROR);
+			return response;
+		}
+		
 		if (cardInfo != null) {
 			response.setCode(ApiResponse.SUCCESS_CODE);
 			response.setData(cardInfo);
