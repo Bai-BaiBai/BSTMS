@@ -37,4 +37,9 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public UserInfo selectByIdNumbers(String idNumbers) {
+		return userInfoMapper.selectByPrimaryKey(idNumbers);
+	}
+
 }
