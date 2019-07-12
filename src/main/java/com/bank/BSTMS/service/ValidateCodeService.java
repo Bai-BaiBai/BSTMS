@@ -18,7 +18,7 @@ public interface ValidateCodeService {
 	 * @param request
 	 * @throws Exception
 	 */
-	void create(HttpServletRequest request, String mobile) throws Exception;
+	void create(HttpServletRequest request) throws Exception;
 	
 	/**
 	 * 校验验证码

@@ -7,7 +7,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.bank.BSTMS.pojo.CardInfo;
+import com.bank.BSTMS.pojo.UserInfo;
 import com.bank.BSTMS.pojo.ValidateCode;
+import com.bank.BSTMS.service.CardService;
+import com.bank.BSTMS.service.UserService;
 import com.bank.BSTMS.service.ValidateCodeService;
 import com.bank.BSTMS.util.Constant;
 import com.bank.BSTMS.util.ValidateCodeGenerator;
@@ -29,9 +33,21 @@ public abstract class AbstractValidateCodeService implements ValidateCodeService
 	@Autowired
 	private ValidateCodeGenerator validateCodeGenerator;
 	
+	@Autowired
+	private CardService cardService;
+	
+	@Autowired
+	private UserService userService;
+	
 	@Override
-	public void create(HttpServletRequest request, String mobile) throws Exception {
+	public void create(HttpServletRequest request) throws Exception {
 
+		HttpSession session = request.getSession();
+		Long cardId = (Long)session.getAttribute(Constant.SESSION_ATTRIBUTE_CARD_ID);
+		CardInfo cardInfo = cardService.selectByCardId(cardId);
+		UserInfo userInfo = userService.selectByIdNumbers(cardInfo.getIdNumbers());
+		String mobile = userInfo.getPhone();
+		
 		ValidateCode code = validateCodeGenerator.generate();
 		save(code, request);
 		send(code, mobile);
@@ -43,7 +59,7 @@ public abstract class AbstractValidateCodeService implements ValidateCodeService
 	 * @param code
 	 * @param request
 	 */
-	private void save(ValidateCode code,HttpServletRequest request) {
+	private void save(ValidateCode code, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		session.setAttribute(Constant.SESSION_VALIDATE_CODE_KEY, code);
@@ -64,6 +80,8 @@ public abstract class AbstractValidateCodeService implements ValidateCodeService
 
 		HttpSession session = request.getSession();
 		ValidateCode validateCode = (ValidateCode)session.getAttribute(Constant.SESSION_VALIDATE_CODE_KEY);
+		
+		System.out.println("发送的验证码：" + validateCode.getCode() + "收到的验证码：" + code);
 		
 		// 如果验证码不一致，验证失败
 		if (!code.equals(validateCode.getCode())) {

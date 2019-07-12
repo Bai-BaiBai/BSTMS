@@ -31,7 +31,7 @@ public class DefaultValidateCodeService extends AbstractValidateCodeService {
 		client.getParams().setContentCharset("GBK");
 		method.setRequestHeader("ContentType", "application/x-www-form-urlencoded;charset=GBK");
 		
-		String content = "您的验证码是：" + code.getCode() + "验证码在5分钟内有效";
+		String content = "您的验证码是：" + code.getCode() + "。请不要把验证码泄露给其他人。";
 		
 		// key为固定API字符串
 		NameValuePair[] data = {
@@ -43,25 +43,23 @@ public class DefaultValidateCodeService extends AbstractValidateCodeService {
 		
 		method.setRequestBody(data);
 		System.out.println("短信发送成功，手机号：" + mobile + "验证码：" + code.getCode() + "时间" + code.getExpireTime());
-//		try {
-//			client.executeMethod(method);
-//			
-//			String submitResult = method.getResponseBodyAsString();
-//			
-//			Document doc = DocumentHelper.parseText(submitResult);
-//			Element root = doc.getRootElement();
-//			
-//			String resultCode = root.elementText("code");
-//			String resultMsg = root.elementText("msg");
-//			
-//			if (resultCode.equals("2")) {
-//				System.out.println("短信发送成功");
-//			} else {
-//				throw new Exception(resultMsg);
-//			}
-//		} catch (Exception e) {
-//			throw new Exception(e.getMessage());
-//		}
+		try {
+			client.executeMethod(method);
+			String submitResult = method.getResponseBodyAsString();
+			
+			Document doc = DocumentHelper.parseText(submitResult);
+			Element root = doc.getRootElement();
+			
+			String resultCode = root.elementText("code");
+			String resultMsg = root.elementText("msg");
+			if (resultCode.equals("2")) {
+				System.out.println("短信发送成功");
+			} else if (!resultCode.equals("2")) {
+				throw new Exception(resultMsg);
+			}
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
 	}
 
 }
