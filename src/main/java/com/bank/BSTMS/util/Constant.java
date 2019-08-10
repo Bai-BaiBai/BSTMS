@@ -15,6 +15,15 @@ public interface Constant {
 	 */
 	
 	/**
+	 * rocketMQ 地址、生产者、消费者组名、topic名称
+	 */
+	public static final String ROCKETMQ_ADDR = "118.126.82.13:9876";
+	public static final String PRODUCER_GROUP_NAME = "msg_producer_group_name";
+	public static final String CONSUMER_GROUP_NAME = "msg_consumer_group_name";
+	public static final String TOPIC = "msg_topic";
+	public static final String TAG = "TAG";
+	
+	/**
 	 * 短信发送接口URL
 	 */
 	public static final String SMS_URL = "http://106.ihuyi.cn/webservice/sms.php?method=Submit";
