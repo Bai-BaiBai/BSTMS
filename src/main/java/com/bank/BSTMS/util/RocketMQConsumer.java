@@ -1,6 +1,10 @@
 package com.bank.BSTMS.util;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -10,6 +14,8 @@ import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.alibaba.rocketmq.remoting.common.RemotingHelper;
+import com.bank.BSTMS.pojo.ValidateCode;
+import com.bank.BSTMS.serviceImpl.DefaultValidateCodeService;
 
 /**
  * RocketMQ消费者
@@ -19,9 +25,13 @@ import com.alibaba.rocketmq.remoting.common.RemotingHelper;
  * @date 2019年8月9日
  * @since JDK 1.8
  */
+@Component
 public class RocketMQConsumer {
 
 	private DefaultMQPushConsumer consumer;
+	
+	@Autowired
+	private DefaultValidateCodeService codeService;
 	
 	private RocketMQConsumer() throws MQClientException {
 		
@@ -49,10 +59,15 @@ public class RocketMQConsumer {
 			MessageExt messageExt = msgs.get(0); //发的是单条消息，所以只有一条
 			
 			try {
-				String topic = messageExt.getTopic();
-				String tags = messageExt.getTags();
+				
 				String body = new String(messageExt.getBody(), RemotingHelper.DEFAULT_CHARSET);
-				System.out.println("topic : " + topic + " tag : " + tags + " body: " + body);	
+				@SuppressWarnings("unchecked")
+				Map<String, Object> map = FastJsonUtils.convertJSONToObject(body, Map.class);
+				ValidateCode code = (ValidateCode) map.get("code");
+				String mobile = (String) map.get("mobile");
+				
+				codeService.send(code, mobile);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				int reconsumeTimes = messageExt.getReconsumeTimes();
@@ -66,7 +81,8 @@ public class RocketMQConsumer {
 		}
 		
 	}
-	
+
+	/*
 	public static void main(String[] args) {
 		try {
 			new RocketMQConsumer();
@@ -76,4 +92,5 @@ public class RocketMQConsumer {
 			e.printStackTrace();
 		}
 	}
+	*/
 }

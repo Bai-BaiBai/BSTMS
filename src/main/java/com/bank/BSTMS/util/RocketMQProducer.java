@@ -2,6 +2,7 @@ package com.bank.BSTMS.util;
 
 import java.util.UUID;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.rocketmq.client.exception.MQBrokerException;
 import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
@@ -74,7 +75,9 @@ public class RocketMQProducer {
 		}
 	}
 
+	/*
 	public static void main(String[] args) {
+		
 		try {
 			RocketMQProducer producer = new RocketMQProducer();
 			System.out.println("------------producer start --------");
@@ -105,4 +108,5 @@ public class RocketMQProducer {
 			e.printStackTrace();
 		}
 	}
+	*/
 }
