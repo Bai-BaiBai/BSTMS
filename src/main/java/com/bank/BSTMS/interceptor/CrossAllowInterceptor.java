@@ -34,7 +34,8 @@ public class CrossAllowInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET,PUT, OPTIONS, DELETE");
-		response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+//		response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+		response.setHeader("Access-Control-Allow-Origin", "http://118.126.82.13:7001");
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		return HandlerInterceptor.super.preHandle(request, response, handler);
 	}

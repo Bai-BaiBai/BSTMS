@@ -1,12 +1,9 @@
 package com.bank.BSTMS.action;
 
-import java.math.BigInteger;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,7 +55,7 @@ public class UserAction {
 		if (cardInfo != null && password == cardInfo.getPassword()) {
 			response.setCode(ApiResponse.SUCCESS_CODE);
 			response.setData(cardInfo);
-			// TODO 存session
+
 			HttpSession session = request.getSession();
 			session.setAttribute(Constant.SESSION_ATTRIBUTE_CARD_ID, cardId);
 		}
