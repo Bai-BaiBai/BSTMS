@@ -1,12 +1,16 @@
 package com.bank.BSTMS.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.rocketmq.common.message.Message;
 import com.bank.BSTMS.pojo.CardInfo;
 import com.bank.BSTMS.pojo.UserInfo;
 import com.bank.BSTMS.pojo.ValidateCode;
@@ -14,6 +18,9 @@ import com.bank.BSTMS.service.CardService;
 import com.bank.BSTMS.service.UserService;
 import com.bank.BSTMS.service.ValidateCodeService;
 import com.bank.BSTMS.util.Constant;
+import com.bank.BSTMS.util.FastJsonUtils;
+import com.bank.BSTMS.util.RocketMQProducer;
+import com.bank.BSTMS.util.TimeUtil;
 import com.bank.BSTMS.util.ValidateCodeGenerator;
 
 /**
@@ -39,6 +46,9 @@ public abstract class AbstractValidateCodeService implements ValidateCodeService
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private RocketMQProducer mqProducer;
+	
 	@Override
 	public void create(HttpServletRequest request) throws Exception {
 
@@ -50,7 +60,20 @@ public abstract class AbstractValidateCodeService implements ValidateCodeService
 		
 		ValidateCode code = validateCodeGenerator.generate();
 		save(code, request);
-		send(code, mobile);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("code", code);
+		map.put("mobile", mobile);
+		String json = FastJsonUtils.convertObjectToJSON(map);
+		
+		Message message = new Message();
+		message.setKeys(UUID.randomUUID().toString() + "$" + TimeUtil.getCurrentTime());
+		message.setTopic(Constant.TOPIC);
+		message.setTags(Constant.TAG);
+		message.setBody(json.getBytes());
+		mqProducer.sendMessage(message);
+		
+//		send(code, mobile); // 调用第三方接口发送短信使用队列完成，在Consumer中send
 	}
 	
 	/**
@@ -70,7 +93,7 @@ public abstract class AbstractValidateCodeService implements ValidateCodeService
 	 * @Title: send
 	 * @param code
 	 */
-	protected abstract void send(ValidateCode code, String mobile) throws Exception;
+	public abstract void send(ValidateCode code, String mobile) throws Exception;
 
 	/**
 	 * 对用户填写的短信验证码进行校验

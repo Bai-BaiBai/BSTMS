@@ -22,7 +22,7 @@ import com.bank.BSTMS.util.Constant;
 public class DefaultValidateCodeService extends AbstractValidateCodeService {
 
 	@Override
-	protected void send(ValidateCode code, String mobile) throws Exception {
+	public void send(ValidateCode code, String mobile) throws Exception {
 
 		HttpClient client = new HttpClient();
 		PostMethod method = new PostMethod(Constant.SMS_URL);
